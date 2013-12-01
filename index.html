@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Functional Programming in Ruby</title>
+
+    <meta name="description" content="An introduction to functional
+                                      programming in Ruby">
+    <meta name="author" content="Joel McCracken">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section>
+          <h1>Functional</h1>
+          <h1>Programming</h1>
+          <h1>in</h1>
+          <h1>Ruby</h1>
+        </section>
+
+        <section>
+          <h2>About Me</h2>
+          <p>Joel McCracken<p>
+          <p>@JoelMcCracken<p>
+          <p>Software Developer at Think Through Math<p>
+          <p>Functional programming enthusiast<p>
+        </section>
+
+
+        <section>
+          <h2>Overview</h2>
+          <p>Three questions to answer:</p>
+          <ol>
+            <li class="fragment">What do we mean by functional
+              programming?</li>
+            <li class="fragment">Why care?</li>
+            <li class="fragment">How do we do functional programming in
+              Ruby ?</li>
+          </ol>
+        </section>
+
+
+        <section>
+          <h3>What do we mean by functional programming?</h3>
+          <ul>
+            <li class="fragment">Paradigm</li>
+            <li class="fragment">Programming with Functions
+              <ul>
+                <li>Treat functions as values</li>
+                <li>Create and return functions</li>
+                <li>Morph functions</li>
+              </ul>
+            </li>
+            <li class="fragment">High order functions</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>What do we Mean by "functions"?</h3>
+          <p>In this talk, a function is a piece of code that:</p>
+          <ul>
+            <li>Takes arguments</li>
+            <li>Returns results</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Functions in Ruby (?)</h3>
+          <ul>
+            <li class="fragment">Ruby doesn't have functions.</li>
+            <li class="fragment">Many function-like things, primarily:
+              <ul>
+                <li class="fragment">Lambdas</li>
+                <li class="fragment">Blocks</li>
+                <li class="fragment">Procs</li>
+              </ul>
+            </li>
+            <li class="fragment">Going to call all of these "functions".</li>
+          </ul>
+        </section>
+
+
+        <section>
+          <h3>Lambdas</h3>
+          <pre><code data-trim contenteditable>
+add_10 = -&gt;(x){ x + 10 }
+add_10.call 4 #=> 14
+          </code></pre>
+          <pre><code data-trim contenteditable>
+lambda { |x| x + 10 }
+          </code></pre>
+          <pre><code data-trim contenteditable>
+lambda do |x|
+  x + 10
+end
+          </code></pre>
+
+        </section>
+
+
+        <section>
+          <h3>Procs</h3>
+          <pre><code data-trim contenteditable>
+add_5 = proc { |x| x + 5 }
+add_5.call 10 #=> 15
+          </code></pre>
+
+          <pre><code data-trim contenteditable>
+add_5 = Proc.new { |x| x + 5 }
+add_5.call 4 #=> 9
+          </code></pre>
+
+        </section>
+        <section>
+          <h3>Symbol#to_proc</h3>
+          <pre><code data-trim contenteditable>
+[1, 2, 3, 4, 5].map &:even?
+# => [false, true, false, true, false]
+          </code></pre>
+          <pre><code data-trim contenteditable>
+&:to_s
+# is essentially the same as
+proc do |obj|
+  obj.to_s
+end
+          </code></pre>
+          <p class="fragment">Very concise and readable.<p>
+        </section>
+
+        <section>
+          <h2>The Functional Paradigm</h2>
+          <p>Paradigm (n.) - </p>
+          <ol>
+            <li class="fragment">A model, example, or pattern</li>
+            <li class="fragment">A way of thinking about programs</li>
+          </ol>
+
+          <p style="margin-top: 2em;" class="fragment">
+            Some paradigms are better suited to problems than others.
+          </p>
+          <p class="fragment">
+            The "style" you should use depends upon the problem you
+            are trying to solve.
+          </p>
+          <p class="fragment">
+            Let's look at other paradigms for contrast.
+          </p>
+        </section>
+
+        <section>
+          <h3>Programming Paradigm Example: Imparative</h3>
+          <p class="fragment">
+            Describing the program as a sequence of steps.
+          </p>
+          <pre class="fragment"><code data-trim contenteditable>
+require 'argus'
+
+drone = Argus::Drone.new
+drone.start
+
+drone.take_off
+sleep 5
+drone.turn_right(1.0)
+sleep 5
+drone.turn_left(1.0)
+sleep 5
+drone.hover.land
+sleep 5
+drone.stop
+          </code></pre>
+          <p class="fragment">
+            Code "tells" the drone each step it should take.
+          </p>
+        </section>
+
+        <section>
+          <h3>Programming paradigm example: Object-oriented</h3>
+          <p class="fragment">Describing the program as the interactions between actors</p>
+          <pre class="fragment"><code data-trim contenteditable>
+student = current_student
+classroom.add_student student
+          </code></pre>
+          <p class="fragment">Code sends "add a student" message to classroom.</p>
+        </section>
+
+
+        <section>
+          <h3>Programming paradigm example: Functional</h3>
+          <p class="fragment">Program described as transformations necessary to perform computation.</p>
+          <pre class="fragment"><code data-trim contenteditable>
+average_test_score =
+  student_tests.map(&:score).
+    reduce(&:+) /
+    student_tests.length
+          </code></pre>
+          <p class="fragment">Code describes a <i>transformation</i>
+            from one data (a set of tests)
+            to another (the average of those tests).
+          </p>
+        </section>
+
+        <section>
+          <h4>Functional paradigm example</h4>
+          <pre class="fragment"><code data-trim contenteditable>
+average_test_score =
+  student_tests.map(&:score).
+    reduce(&:+) /
+    student_tests.length
+          </code></pre>
+          <p class="fragment"> Lets break it down. </p>
+          <p class="fragment"> Problem: "Given a set of tests, find the average score." </p>
+          <p class="fragment"> Solution: "Sum the scores of the tests and divide by the
+          total number of tests" </p>
+          <pre class="fragment"><code data-trim contenteditable>
+              set_of_scores_of_each_test = student_tests.map(&:score)
+          </code></pre>
+          <pre class="fragment"><code data-trim contenteditable>
+              sum_of_test_scores = set_of_scores_of_each_test.reduce(&:+)
+          </code></pre>
+          <pre class="fragment"><code data-trim contenteditable>
+              number_of_tests = student_tests.length
+          </code></pre>
+          <pre class="fragment"><code data-trim contenteditable>
+              average_test_score = sum_of_test_scores / number_of_tests
+          </code></pre>
+        </section>
+        <section>
+          <h2>Ruby's Many Functions</h2>
+          <h3>(Choose your functions wisely)</h3>
+          <p>Ruby is full of function-like things:</p>
+          <ul class="fragment">
+            <li>lambdas</li>
+            <li>blocks</li>
+            <li>procs</li>
+            <li class="fragment">methods</li>
+            <li class="fragment">"proc" ducked-typed objects</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Methods</h3>
+          <pre class="fragment"><code data-trim contenteditable class="ruby">
+class MySpiffyCollection
+  def initialize(items)
+    @collection = items
+  end
+  #...
+  def map(fn)
+    saved = []
+    @collection.each do |item|
+      saved &lt;&lt; fn.call(item)
+    end
+    MySpiffyCollection.new(saved)
+  end
+  #...
+end
+          </code></pre>
+          <p class="fragment">
+            This method takes a function as and argument,
+            applies it to each item, and returns a new instance of itself
+            containing the results of the evaluation.
+          </p>
+        </section>
+
+        <section>
+          <h3>"Proc" Ducked-Typed Objects</h3>
+
+          <ul>
+            <li class="fragment">Both procs and lambdas are called through the '#call' method.</li>
+            <li class="fragment">Our own objects can look like and quack like a proc.</li>
+          </ul>
+
+          <pre class="fragment"><code data-trim contenteditable class="ruby">
+class MakeUsersHappy
+  def call
+    if some_choice?
+      do_this
+    else
+      do_that
+    end
+  end
+
+  #... define 'some_choice?', 'do_this', and 'do_that'
+end
+
+happy_users = MySpiffyCollection.new(dissatisfied_users).
+  map(MakeUsersHappy.new)
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>The "Block Semantics" Gotcha</h3>
+          <p>
+            Blocks and procs try to behave like plain-ol' blocks which
+            creates some unintuitive behavior.
+          </p>
+          <p class="fragment">
+            Some rules to avoid this problem:
+          </p>
+          <ul>
+            <li class="fragment">
+              Avoid explicit 'returns' whenever possible.
+              Use <code>-&gt;{ x + 1 }</code>
+              instead of
+              <code>-&gt;{return x + 1 }</code>.
+            </li>
+            <li class="fragment">
+              Use lambdas instead of procs.
+            </li>
+          </ul>
+          <p style='margin-top: 2em;' class="fragment">(If you want to talk about this more,
+          see me after)</p>
+        </section>
+
+
+        <section>
+          <h3>Immutability and Functional Purity</h3>
+          <p>Ruby is a flexible language and doesn't "force" you to do
+          anything, so some discussions on immutability and purity do
+          not apply.</p>
+
+          <p>However, there are a few principles to follow to
+          help. When programming in a functional style: </p>
+          <ul>
+            <li class="fragment">
+              do not modify
+              anything. Instead, create new instances.
+            </li>
+            <li class="fragment">
+              do not reference global variables or class-level instance data.
+              Functions should not depend upon the environment they
+              are executed in.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h1>THE END</h1>
+          <p>Questions?</p>
+        </section>
+
+      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
